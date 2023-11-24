@@ -1,18 +1,34 @@
-install-roles:
-	ansible-galaxy install -r requirements.yml
-	
-prepare:
-	make install-roles & ansible-playbook --vault-password-file vault-password prepare.yml -i inventory.ini
+VAULT_PASSWORD_FILE = $(CURDIR)/vault_password.txt
 
 deploy:
-	ansible-playbook --vault-password-file vault-password deploy.yml -i inventory.ini
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml
 
-# Vault
-encrypt:
-	ansible-vault encrypt group_vars/webservers/vault.yml
+requirements:
+	ansible-galaxy install -r requirements.yml --force
 
-decrypt:
-	ansible-vault decrypt group_vars/webservers/vault.yml
+encrypt_vault:
+	ansible-vault encrypt --vault-password-file=$(VAULT_PASSWORD_FILE) $(CURDIR)/group_vars/webservers/vault.yml
 
-edit:
-	ansible-vault edit group_vars/webservers/vault.yml
+decrypt_vault:
+	ansible-vault decrypt --vault-password-file=$(VAULT_PASSWORD_FILE) $(CURDIR)/group_vars/webservers/vault.yml
+
+edit_vault:
+	ansible-vault edit --vault-password-file=$(VAULT_PASSWORD_FILE) $(CURDIR)/group_vars/webservers/vault.yml
+
+view_vault:
+	ansible-vault view --vault-password-file=$(VAULT_PASSWORD_FILE) $(CURDIR)/group_vars/webservers/vault.yml
+
+update_cache:
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml --tags="update cache"
+
+install_pip:
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml --tags="install_pip"
+
+install_docker:
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml --tags="install_docker"
+
+configure_datadog:
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml --tags="configure_datadog"
+
+deploy_redmine:
+	ANSIBLE_VAULT_PASSWORD_FILE=$(VAULT_PASSWORD_FILE) ansible-playbook -i inventory.ini playbook.yml --tags="deploy_redmine"

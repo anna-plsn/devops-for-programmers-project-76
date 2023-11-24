@@ -1,0 +1,47 @@
+---
+- name: Ensure /root/ansible_project directory exists
+  file:
+    path: /root/ansible_project
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: Install docker Python library via APT
+  apt:
+    name: python3-docker
+    state: present
+  become: true
+
+- name: Create .env file from template
+  template:
+    src: .env.j2
+    dest: /root/ansible_project/.env
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: Pull Redmine Docker image
+  docker_image:
+    source: pull
+    name: "redmine:{{ redmine_version }}"
+  become: true
+
+- name: Create Redmine data volume
+  docker_volume:
+    name: redmine_data
+  become: true
+
+- name: Run Redmine container
+  docker_container:
+    name: redmine
+    image: "redmine:{{ redmine_version }}"
+    env_file: /root/ansible_project/.env
+    volumes:
+      - redmine_data:/usr/src/redmine/files
+    ports:
+      - "{{ redmine_external_port }}:3000"
+    restart_policy: always
+  become: true

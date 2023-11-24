@@ -1,0 +1,6 @@
+REDMINE_DB_USERNAME={{ redmine_env_variables.REDMINE_DB_USERNAME }}
+REDMINE_DB_PASSWORD={{ redmine_env_variables.REDMINE_DB_PASSWORD }}
+REDMINE_DB_HOST={{ redmine_env_variables.REDMINE_DB_HOST }}
+REDMINE_DB_PORT={{ redmine_env_variables.REDMINE_DB_PORT }}
+REDMINE_DB_DATABASE={{ redmine_env_variables.REDMINE_DB_DATABASE }}
+REDMINE_DB_SSLMODE={{ redmine_env_variables.REDMINE_DB_SSLMODE }}
