@@ -1,0 +1,10 @@
+- hosts: all
+
+  roles:
+    - role: geerlingguy.pip
+      become: true
+
+  tasks:
+    - name: install pip docker
+      ansible.builtin.pip:
+        name: docker

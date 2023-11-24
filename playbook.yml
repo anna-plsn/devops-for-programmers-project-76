@@ -1,7 +1,8 @@
 - hosts: webservers
 
-  roles:
-    - role: geerlingguy.pip
-      become: yes
-    - role: geerlingguy.docker
-      become: yes
+ tasks:
+  - name: prepare servers
+  ansible.builtin.import_playbook: prepare.yml
+
+  - name: deploy project
+  ansible.builtin.import_playbook: deploy.yml
