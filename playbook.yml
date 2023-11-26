@@ -1,8 +1,43 @@
-- hosts: webservers
+- name: Deploy redmine
+  hosts: all
+  become: true
 
- tasks:
-  - name: prepare servers
-  ansible.builtin.import_playbook: prepare.yml
+- name: Prepare Python and Install Docker
+  hosts: all
+  become: true
+  tasks:
+    - name: Update repositories cache
+      ansible.builtin.apt:
+        update_cache: yes
+      tags:
+        - update_cache
 
-  - name: deploy project
-  ansible.builtin.import_playbook: deploy.yml
+    - name: Install pip
+      include_role:
+        name: geerlingguy.pip
+      tags:
+        - install_pip
+
+- name: Install Docker on webservers
+  hosts: webservers
+  become: true
+  roles:
+    - geerlingguy.docker
+  tags:
+    - install_docker
+
+- name: Configure datadog on webservers
+  hosts: webservers
+  become: true
+  roles:
+    - datadog.datadog
+  tags:
+    - configure_datadog
+
+- name: Deploy Redmine on webservers
+  hosts: webservers
+  become: true
+  roles:
+    - deploy_redmine
+  tags:
+    - deploy_redmine
